@@ -1,5 +1,6 @@
 import os
 import requests
+import traceback
 from github import Github
 from github.GithubException import GithubException
 
@@ -34,7 +35,8 @@ class GithubHandler:
             pull_request = repo.get_pull(pr_number)
             return pull_request
         except GithubException as e:
-            raise Exception(f"Failed to get PR details: {str(e)}")
+            traceback.print_exc()
+            raise e
     
     def get_pr_diffs(self, repo_name, pr_number):
         """
@@ -57,7 +59,7 @@ class GithubHandler:
             response = requests.get(diff_url, headers=headers)
             
             if response.status_code != 200:
-                raise Exception(f"Failed to get PR diff: {response.status_code}")
+                raise Exception(f"Failed to get PR diff: {response.status_code} {diff_url} {self.github_token} {repo_name} {pr_number}")
             
             # Parse the diff content
             diff_content = response.text
@@ -66,7 +68,8 @@ class GithubHandler:
             return self._parse_diff_content(diff_content)
             
         except Exception as e:
-            raise Exception(f"Failed to get PR diffs: {str(e)}")
+            traceback.print_exc()
+            raise e
     
     def _parse_diff_content(self, diff_content):
         """

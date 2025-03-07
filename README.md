@@ -151,6 +151,10 @@ The simplest way to deploy the application is using Docker:
 
 ```
 docker run -d --restart unless-stopped -p 5000:5000 --env-file .env pr-agent
+
+or
+
+docker run -it --restart unless-stopped -p 6000:6000 --env-file .env pr-agent
 ```
 
 Or using Docker Compose:

@@ -1,6 +1,6 @@
 import os
 import json
-import importlib
+import traceback
 
 class LLMAnalyzer:
     """
@@ -20,32 +20,50 @@ class LLMAnalyzer:
         
         # Initialize the appropriate client based on the provider
         if self.provider == 'openai':
-            from openai import OpenAI
-            self.client = OpenAI(api_key=api_key)
+            try:
+                from openai import OpenAI
+                self.client = OpenAI(api_key=api_key)
+            except Exception as e:
+                print(f"Error initializing OpenAI client: {str(e)}")
+                raise e
         elif self.provider == 'anthropic':
             try:
                 from anthropic import Anthropic
                 self.client = Anthropic(api_key=api_key)
-            except ImportError:
-                raise ImportError("Anthropic package not installed. Install with 'pip install anthropic'")
+            except ImportError as e:
+                print("Anthropic package not installed. Install with 'pip install anthropic'")
+                raise e
+            except Exception as e:
+                print(f"Error initializing Anthropic client: {str(e)}")
+                raise e
         elif self.provider == 'google':
             try:
                 import google.generativeai as genai
                 genai.configure(api_key=api_key)
                 self.client = genai
-            except ImportError:
-                raise ImportError("Google Generative AI package not installed. Install with 'pip install google-generativeai'")
+            except ImportError as e:
+                print("Google Generative AI package not installed. Install with 'pip install google-generativeai'")
+                raise e
+            except Exception as e:
+                print(f"Error initializing Google Generative AI client: {str(e)}")
+                raise e
         elif self.provider == 'azure_openai':
-            from openai import AzureOpenAI
-            azure_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
-            if not azure_endpoint:
-                raise ValueError("AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI")
-            self.client = AzureOpenAI(
-                api_key=api_key,
-                api_version=os.getenv('AZURE_OPENAI_API_VERSION', '2023-05-15'),
-                azure_endpoint=azure_endpoint
-            )
+            try:
+                from openai import AzureOpenAI
+                azure_endpoint = os.getenv('AZURE_OPENAI_ENDPOINT')
+                if not azure_endpoint:
+                    print("AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI")
+                    raise ValueError("AZURE_OPENAI_ENDPOINT environment variable is required for Azure OpenAI")
+                self.client = AzureOpenAI(
+                    api_key=api_key,
+                    api_version=os.getenv('AZURE_OPENAI_API_VERSION', '2023-05-15'),
+                    azure_endpoint=azure_endpoint
+                )
+            except Exception as e:
+                print(f"Error initializing Azure OpenAI client: {str(e)}")
+                raise e
         else:
+            print(f"Unsupported LLM provider: {self.provider}")
             raise ValueError(f"Unsupported LLM provider: {self.provider}")
     
     def analyze_diffs(self, diffs):
@@ -110,8 +128,10 @@ class LLMAnalyzer:
             elif self.provider == 'azure_openai':
                 return self._call_azure_openai(system_prompt, prompt)
             else:
+                print(f"Unsupported LLM provider in _analyze_file_diff: {self.provider}")
                 raise ValueError(f"Unsupported LLM provider: {self.provider}")
         except Exception as e:
+            traceback.print_exc()
             print(f"Error analyzing file {file_path} with {self.provider}: {str(e)}")
             return []
     
@@ -254,6 +274,7 @@ Only include comments that are valuable and actionable. If there are no issues t
         except json.JSONDecodeError:
             # If JSON parsing fails, try to extract comments in a different way
             # This is a fallback in case the LLM doesn't format the response as requested
+            traceback.print_exc()
             print(f"Failed to parse JSON response: {analysis_text}")
             return []
     

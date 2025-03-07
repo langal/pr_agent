@@ -13,7 +13,7 @@ RUN echo '#!/bin/bash\n\
 # Install additional LLM provider packages based on LLM_PROVIDER\n\
 if [ "$LLM_PROVIDER" = "anthropic" ]; then\n\
   echo "Installing Anthropic package..."\n\
-  pip install --no-cache-dir anthropic==0.8.1\n\
+  pip install --no-cache-dir anthropic==0.49.0\n\
 elif [ "$LLM_PROVIDER" = "google" ]; then\n\
   echo "Installing Google Generative AI package..."\n\
   pip install --no-cache-dir google-generativeai==0.3.1\n\
