@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  pr-agent:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      # LLM Provider Configuration
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_API_KEY=${LLM_API_KEY:-${OPENAI_API_KEY}}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4-turbo}
+      # For backward compatibility
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Azure OpenAI specific (if needed)
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION:-2023-05-15}
+      # Server configuration
+      - PORT=5000
+      # Set DEBUG=1 to run in debug mode (sleep infinity)
+      # - DEBUG=1
+    volumes:
+      # For development, mount the code to enable hot reloading
+      - .:/app
+    restart: unless-stopped
+
+  # Example of running in DEBUG mode
+  pr-agent-debug:
+    build: .
+    environment:
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      # LLM Provider Configuration
+      - LLM_PROVIDER=${LLM_PROVIDER:-openai}
+      - LLM_API_KEY=${LLM_API_KEY:-${OPENAI_API_KEY}}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4-turbo}
+      # For backward compatibility
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      # Azure OpenAI specific (if needed)
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION:-2023-05-15}
+      # Debug mode
+      - DEBUG=1
+    volumes:
+      - .:/app
+    # This service is commented out by default
+    profiles:
+      - debug
