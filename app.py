@@ -1,5 +1,7 @@
 import os
 import json
+import logging
+import traceback
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from github_handler import GithubHandler
@@ -8,6 +10,12 @@ from github_commenter import GithubCommenter
 
 # Load environment variables
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+)
 
 app = Flask(__name__)
 
@@ -36,6 +44,7 @@ def webhook():
                 return jsonify({'status': 'success', 'message': f'Processing PR #{pr_number}'})
             except Exception as e:
                 app.logger.error(f"Error processing webhook: {str(e)}")
+                app.logger.error(f"Stack trace: {traceback.format_exc()}")
                 return jsonify({'status': 'error', 'message': str(e)}), 500
         
         return jsonify({'status': 'ignored', 'message': 'Not a relevant PR event'})

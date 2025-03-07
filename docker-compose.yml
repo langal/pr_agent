@@ -4,7 +4,7 @@ services:
   pr-agent:
     build: .
     ports:
-      - "5000:5000"
+      - "6000:6000"
     environment:
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       # LLM Provider Configuration
@@ -17,7 +17,7 @@ services:
       - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
       - AZURE_OPENAI_API_VERSION=${AZURE_OPENAI_API_VERSION:-2023-05-15}
       # Server configuration
-      - PORT=5000
+      - PORT=6000
       # Set DEBUG=1 to run in debug mode (sleep infinity)
       # - DEBUG=1
     volumes:

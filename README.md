@@ -29,7 +29,7 @@ A Flask application that automatically analyzes GitHub pull requests using an LL
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/pr_agent.git
+   git clone https://github.com/langal/pr_agent.git
    cd pr_agent
    ```
 
@@ -49,7 +49,7 @@ A Flask application that automatically analyzes GitHub pull requests using an LL
 
 1. Clone this repository:
    ```
-   git clone https://github.com/yourusername/pr_agent.git
+   git clone https://github.com/langal/pr_agent.git
    cd pr_agent
    ```
 
